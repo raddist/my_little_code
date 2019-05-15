@@ -20,18 +20,15 @@ def crop(img, cutter):
 	x, y, w, h = cutter
 	return img[y:y + h, x:x + w]
 
-def get_img_vectors(img, masks = None, cutters = None):
+def get_img_vectors(img, masks = None):
 
-	if masks is None and cutters is None:
+	if masks is None:
 		return [get_area_vector(img)]
 
 	vectors = []
 	if masks is not None:
 		for mask in masks:
 			vectors.append( get_area_vector(img, mask) )
-	if cutters is not None:	
-		for cutter in cutters:
-			vectors.append( get_area_vector( crop(img, cutter)) )
 
 	return vectors
 
@@ -196,6 +193,44 @@ def ranking_by_img_segment_vectors(query_img_data, data):
 		img_vectors = get_img_vectors(elem['image'], masks = img_masks)
 		for vector in img_vectors:
 			data_vecs.append( [vector, elem['imgname']] )
+
+#	for (i, (vector, name)) in enumerate(data_vecs):
+#		print('Vector = ', vector , ', name = ', name)
+
+	print(len(data_vecs))
+	distances = rank_vectors(q_vector[0], data_vecs)
+	#print(distances)
+
+	sorted_names = []
+	print("results:/n")
+	for distance in distances:
+		sorted_names.append(distance[1])
+		print(distance[1])
+
+	return sorted_names
+    
+    
+def rank_images_by_vectors(query_img_data, data,
+                           cutter_fn = None,
+                           do_segmentation = False,
+                           info_collector = None):
+
+	q_vector = get_img_vectors(query_img_data['image'])
+	#print('Query vector: ', q_vector)
+    
+	data_vecs = []
+	for elem in data:
+        sub_images = [elem['image']] if cutter_fn is None else cutter_fn(elem['image'])
+        for sub_image in sub_images:
+            img_vectors = []
+            if not do_segmentation:
+                img_vectors = get_img_vectors(sub_image)
+            else:
+                img_masks = get_segments_masks(sub_image)
+                img_vectors = get_img_vectors(sub_image, masks = img_masks)
+            
+            for vector in img_vectors:
+                data_vecs.append( [vector, elem['imgname']] )
 
 #	for (i, (vector, name)) in enumerate(data_vecs):
 #		print('Vector = ', vector , ', name = ', name)

@@ -34,9 +34,8 @@ for filename in os.listdir(data_location_name):
 	img = cv2.imread(name, 1)
 	data.append( dict(image = img, imgname = name) )
 
-#sorted_names = pws.ranking_by_color_hist(query_img, data)
-sorted_names = pt.ranking_by_img_segment_vectors( dict(image = query_img, imgname = 'query'), data)
-#sorted_names = ranking_by_segment(query_img, data, query_segmentation = segment_query)
+#sorted_names = pt.ranking_by_img_segment_vectors( dict(image = query_img, imgname = 'query'), data)
+sorted_names = pt.rank_images_by_vectors( dict(image = query_img, imgname = 'query'), data, do_segmentation = True)
 
 #show results
 result_dir_name = 'Practice_results'
