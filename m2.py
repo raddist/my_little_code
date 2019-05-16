@@ -26,7 +26,7 @@ def get_img_cutters(image):
 
 	crop_w = width // n_w
 	crop_h = height // n_h
-	print('crop_w ',crop_w ,', crop_h', crop_h ,', n_w', n_w ,', n_h', n_h )
+	#print('crop_w ',crop_w ,', crop_h', crop_h ,', n_w', n_w ,', n_h', n_h )
 
 	cutters = []
 	for row in range(1, n_h):

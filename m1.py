@@ -23,21 +23,22 @@ query_img = cv2.imread(query_img_name, 1)
 # get data
 data = []
 for filename in os.listdir(data_location_name):
-	name = os.path.join(data_location_name, filename)
+    name = os.path.join(data_location_name, filename)
 
-	img = cv2.imread(name, 1)
-	data.append( dict(image = img, imgname = name) )
+    img = cv2.imread(name, 1)
+    data.append( dict(image = img, imgname = name) )
 
 #sorted_names = pt.ranking_by_img_vectors( dict(image = query_img, imgname = 'query'), data)
-sorted_names = pt.rank_images_by_vectors( dict(image = query_img, imgname = 'query'), data, cutter_fn = )
+sorted_names, metadata = pt.rank_images_by_vectors( dict(image = query_img, imgname = 'query'), data, info = True )
+print(metadata)
 
 #show results
 result_dir_name = 'Practice_results'
 if not os.path.exists(result_dir_name):
-	os.mkdir( result_dir_name )
+    os.mkdir( result_dir_name )
 else:
-	rmtree( result_dir_name )
-	os.mkdir( result_dir_name )
+    rmtree( result_dir_name )
+    os.mkdir( result_dir_name )
 
 for (i, res_name) in enumerate(sorted_names):
-	copyfile( res_name, os.path.join('./',result_dir_name,str(str(i) + '_' + os.path.basename(res_name))) )
+    copyfile( res_name, os.path.join('./',result_dir_name,str(str(i) + '_' + os.path.basename(res_name))) )
