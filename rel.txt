@@ -6,10 +6,10 @@ el1.jpg:,el1.jpg,el2.jpg,el3.jpg,el4.jpg,el6.jpg
 el2.jpg:,el1.jpg,el2.jpg,el3.jpg,el4.jpg,el6.jpg
 el3.jpg:,el1.jpg,el2.jpg,el3.jpg,el4.jpg,el6.jpg
 el4.jpg:,el1.jpg,el2.jpg,el3.jpg,el4.jpg,el6.jpg
-el6.jpg:,el1.jpg,el2.jpg,el3.jpg,el4.jpg,el6.jpg
-key.bmp:,key.bmp
-obj.bmp:,obj.bmp,obj1.bmp,obj2.jpg,obj3.png,obj4.jpg
-obj1.bmp:,obj.bmp,obj1.bmp,obj2.jpg,obj3.png,obj4.jpg
-obj2.jpg:,obj.bmp,obj1.bmp,obj2.jpg,obj3.png,obj4.jpg
-obj3.png:,obj.bmp,obj1.bmp,obj2.jpg,obj3.png,obj4.jpg
-obj4.jpg:,obj.bmp,obj1.bmp,obj2.jpg,obj3.png,obj4.jpg
+el6.jpg:,el1.jpg,el2.jpg,el3.jpg,el4.jpg,el6.jpg
+obj.bmp:,obj.bmp,obj1.bmp,obj2.jpg,obj3.png,obj4.jpg,obj5.bmp
+obj1.bmp:,obj.bmp,obj1.bmp,obj2.jpg,obj3.png,obj4.jpg,obj5.bmp
+obj2.jpg:,obj.bmp,obj1.bmp,obj2.jpg,obj3.png,obj4.jpg,obj5.bmp
+obj3.png:,obj.bmp,obj1.bmp,obj2.jpg,obj3.png,obj4.jpg,obj5.bmp
+obj4.jpg:,obj.bmp,obj1.bmp,obj2.jpg,obj3.png,obj4.jpg,obj5.bmp
+obj5.bmp:,obj.bmp,obj1.bmp,obj2.jpg,obj3.png,obj4.jpg,obj5.bmp
