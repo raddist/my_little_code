@@ -21,10 +21,10 @@ for filename in os.listdir(data_location_name):
     
     ex_index = m.start()
 
-    print(m,filename )
+    #print(m,filename )
     img_names.append( dict(key=filename[0:ex_index], val= filename) )
 
-print(img_names)
+#print(img_names)
 
 with open(write_file, 'w') as fw:
     for elem in img_names:

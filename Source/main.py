@@ -12,7 +12,6 @@ from copy import copy, deepcopy
 from rankDataForQuery import rankDataForQuery
 from getRelevants import RelevatInfoReader
 from qualityAnalyzers import q_anayzer
-from getRoiArea import ROIAreaReader
 
 # объект - ground trouth
 # объект - разбиватель
@@ -22,26 +21,6 @@ from getRoiArea import ROIAreaReader
 # загрузка и преоразование данных
 
 # вызов rankDataForQuery с нужными параметрами
-
-def get_area_vector(img, mask = None):
-    mean, std = cv2.meanStdDev( img, mask = mask  )
-    r_mean, g_mean, b_mean = mean
-    r_std, g_std, b_std = std
-    vector = np.array([ r_mean[0], g_mean[0], b_mean[0], r_std[0], g_std[0], b_std[0] ])
-
-    return vector
-
-def get_img_vectors(img, masks = None):
-
-    if masks is None:
-        return [get_area_vector(img)]
-
-    vectors = []
-    if masks is not None:
-        for mask in masks:
-            vectors.append( get_area_vector(img, mask) )
-
-    return vectors
 
 def get_img_cutters(image):
     height, width, channels = image.shape
@@ -72,6 +51,7 @@ def get_img_cutters(image):
         cutters.append([(col-1)*crop_w, (n_h-1)*crop_h, crop_w, height - (n_h-1)*crop_h])
 
     cutters.append([(n_w-1)*crop_w, (n_h-1)*crop_h, width-(n_w-1)*crop_w, height - (n_h-1)*crop_h])
+    #print("\n",str(cutters))
 
     return cutters
 
@@ -90,7 +70,10 @@ def cut_image( image, cutter_fn ):
 
 def get_segments_masks(img):
     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+
+    print("  Start segmentstion:")
     segments = slic(img, n_segments = 10, compactness=0.1, sigma = 5)
+    print("  end segmentstion!")
 
     # show the output of SLIC
     #fig = plt.figure("Superpixels -- %d segments" % (20))
@@ -108,53 +91,41 @@ def get_segments_masks(img):
     min_mask = np.min(segments)
     max_mask = np.max(segments)
 
+    print("  Start copy:")
     masks = []
     for i in range(min_mask, max_mask+1):
+        print(str(i))
         mask = copy(segments)
         mask = np.uint8(mask)
-        for row in mask:
-            for j, elem in enumerate(row):
-                if elem == i:
-                    row[j] = True
+        print(str(i))
+        h,w = mask.shape
+        for row in range(0,h):
+            for col in range(0,w):
+                if mask[row][col] == i:
+                    mask[row][col] = 1
                 else:
-                    row[j] = False
+                    mask[row][col] = 0
         masks.append(mask)
+    print("  end copy!")
+
 
     return masks
 
 
-# read data location
-data_location_name = sys.argv[1]
-
-
-# get data
-data = []
-for filename in os.listdir(data_location_name):
-    name = os.path.join(data_location_name, filename)
-
-    img = cv2.imread(name, 1)
-    data.append( dict(image = img, imgname = filename) )
-
-# get queries
-queries = []
-for filename in os.listdir(data_location_name):
-    name = os.path.join(data_location_name, filename)
-
-    img = cv2.imread(name, 1)
-    queries.append( dict(image = img, imgname = filename) )
-
-marked_queries = []
-roiReader = ROIAreaReader('../marked_data.txt')
-for filename in os.listdir(data_location_name):
-    name = os.path.join(data_location_name, filename)
-
-    img = cv2.imread(name, 1)
-    roi_cutter = roiReader.get_cutter(filename)
-
-    marked_queries.append( dict(image = crop(img, roi_cutter), imgname = filename) )
+data_locaton = '../Big_data'
+relevant_info_location = '../big_rel.txt'
+marked_data_location = '../marked_big_data.txt'
 
 # read relevant results for query
-info_extractor = RelevatInfoReader('../rel.txt')
+info_extractor = RelevatInfoReader(relevant_info_location)
 analyzer = q_anayzer(info_extractor)
 
-rankDataForQuery(marked_queries, data, get_img_vectors, cutter_fn = get_img_cutters, segments_maker = get_segments_masks,  res_analyzer = analyzer)
+# m1
+#rankDataForQuery(data_locaton, res_analyzer = analyzer)
+analyzer.Reset()
+# m2
+#rankDataForQuery(data_locaton, marked_data_location, cutter_fn = get_img_cutters,  res_analyzer = analyzer)
+analyzer.Reset()
+# m3
+rankDataForQuery(data_locaton, marked_data_location, cutter_fn = None, segments_maker = get_segments_masks,  res_analyzer = analyzer)
+analyzer.Reset()
