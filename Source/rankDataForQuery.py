@@ -29,24 +29,30 @@ def cut_image( image, cutter_fn ):
     return parts
 
 
-def prepareData(data_location_name, indexed_data, marked_data_file_name = None):
+def prepareData(data_location_names, indexed_data, marked_data_file_name = None):
     roiReader = None
     if marked_data_file_name is not None:
         roiReader = ROIAreaReader(marked_data_file_name)
     # get data
     data_vecs = load_descriptors(indexed_data)
     query_vecs = []
-    for filename in os.listdir(data_location_name):
-        name = os.path.join(data_location_name, filename)
-        img = cv2.imread(name, 1)
 
-        if marked_data_file_name is not None:
-            roi_cutter = roiReader.get_cutter(filename)
-            img = crop(img, roi_cutter)
+    for data_location_name in data_location_names:
+        for filename in os.listdir(data_location_name):
+            file_name, file_extension = os.path.splitext(filename)
+            if file_extension == '.txt':
+                continue
 
-        img_vectors = get_img_vectors(img)
-        for vec in img_vectors:
-            query_vecs.append( [vec, filename])
+            name = os.path.join(data_location_name, filename)
+            img = cv2.imread(name, 1)
+
+            if marked_data_file_name is not None:
+                roi_cutter = roiReader.get_cutter(filename)
+                img = crop(img, roi_cutter)
+
+            img_vectors = get_img_vectors(img)
+            for vec in img_vectors:
+                query_vecs.append( [vec, filename])
 
     desc_len = 0
     # collect descriptor len

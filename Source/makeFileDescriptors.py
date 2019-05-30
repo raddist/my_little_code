@@ -75,7 +75,6 @@ def get_segments_masks(img):
         print(str(i))
         mask = copy(segments)
         mask = np.uint8(mask)
-        print(str(i))
         h,w = mask.shape
         for row in range(0,h):
             for col in range(0,w):
@@ -90,12 +89,12 @@ def get_segments_masks(img):
     return masks
 
 
-data_locaton = '../Data'
-
+data_locatons = ['../../../Test_data/bears', '../../../Test_data/croco']
+prefix = 'bear_croco_'
 
 # m1
-generate_descriptors(data_locaton)
+generate_descriptors(data_locatons, prefix = prefix)
 # m2
-generate_descriptors(data_locaton,  cutter_fn = get_img_cutters )
+generate_descriptors(data_locatons,  cutter_fn = get_img_cutters, prefix = prefix)
 # m3
-generate_descriptors(data_locaton,  cutter_fn = None, segments_maker = get_segments_masks)
+generate_descriptors(data_locatons,  cutter_fn = None, segments_maker = get_segments_masks, prefix = prefix)

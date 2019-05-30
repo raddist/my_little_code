@@ -12,21 +12,7 @@ from copy import copy, deepcopy
 
 from doRankingData import doRankingData
 from getRoiArea import ROIAreaReader
-from getAreaDescriptor import get_area_vector
-
-
-
-
-def get_img_vectors(img, masks = None):
-    if masks is None:
-        return [get_area_vector(img)]
-
-    vectors = []
-    if masks is not None:
-        for mask in masks:
-            vectors.append( get_area_vector(img, mask) )
-
-    return vectors
+from getAreaDescriptor import get_img_vectors
 
 
 def crop(img, cutter):
@@ -79,30 +65,40 @@ def read_descriptors(read_file_name = None):
 
 
 
-def generate_descriptors(data_location_name, cutter_fn = None, segments_maker = None):
+def generate_descriptors(data_location_names, cutter_fn = None, segments_maker = None, prefix = None):
 
     # get data
     data_vecs = []
     query_vecs = []
-    for filename in os.listdir(data_location_name):
 
-        print("Process ",filename, "file\n")
-        name = os.path.join(data_location_name, filename)
+    for data_location_name in data_location_names:
+        for filename in os.listdir(data_location_name):
+            file_name, file_extension = os.path.splitext(filename)
+            if file_extension == '.txt':
+                continue
 
-        img = cv2.imread(name, 1)
-        sub_images = [img] if cutter_fn is None else cut_image(img, cutter_fn)
-        for sub_image in sub_images:
-            img_vectors = []
-            if segments_maker is None:
-                img_vectors = get_img_vectors(sub_image)
-            else:
-                img_masks = segments_maker(sub_image)
-                img_vectors = get_img_vectors(sub_image, masks = img_masks)
-            
-            for vector in img_vectors:
-                data_vecs.append( [vector, filename] )
+            print("Process ",filename, "file\n")
+            name = os.path.join(data_location_name, filename)
 
-    file_name = data_location_name.replace("../", "_")
+            img = cv2.imread(name, 1)
+            sub_images = [img] if cutter_fn is None else cut_image(img, cutter_fn)
+            for sub_image in sub_images:
+                img_vectors = []
+                if segments_maker is None:
+                    img_vectors = get_img_vectors(sub_image)
+                else:
+                    img_masks = segments_maker(sub_image)
+                    img_vectors = get_img_vectors(sub_image, masks = img_masks)
+                
+                for vector in img_vectors:
+                    data_vecs.append( [vector, filename] )
+
+    file_name = ""
+    if prefix is None:
+        file_name = data_location_name.replace("../", "_").replace("/", "_")
+    else:
+        file_name = prefix
+
     if cutter_fn is not None:
         file_name += "_cutted"
     if segments_maker is not None:

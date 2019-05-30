@@ -15,6 +15,7 @@ for filename in os.listdir(data_location_name):
     name = os.path.join(data_location_name, filename)
 
     img = cv2.imread(name, 1)
+    print(name)
 
     # Select interesting region
     Rect2d = cv2.selectROI(img, False)
